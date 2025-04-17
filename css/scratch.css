@@ -1,0 +1,43 @@
+p{
+    font-weight: bold;
+    font-size: 20px;
+    
+}
+#top{
+    text-decoration: underline;
+}
+
+.emphtext{
+    font-style: italic;
+    color: gray;
+    
+}
+body{
+    background-color: gainsboro;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+
+    color:darkslategray;
+
+}
+.centered-list{
+    padding-left: 0;
+    list-style-position: outside;
+    margin: 0 auto;
+    display: table;
+    text-align: left;
+
+}
+.header{
+    background-color: gray;
+    color: black;
+}
+.footer{
+    background-color: gray;
+}
+.image{
+    border: 100px;
+    border-color: black;
+    padding: 10px;
+    margin: 10px;
+}
