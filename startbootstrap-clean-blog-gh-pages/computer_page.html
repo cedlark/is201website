@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BYU Connect 4</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: rgb(187, 200, 245);
+      color: royalblue;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: royalblue;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(7, 60px);
+      grid-template-rows: repeat(6, 60px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .cell {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: black;
+      cursor: pointer;
+    }
+
+    .cell.user {
+      background-color: #002E5D;
+    }
+
+    .cell.computer {
+      background-color: #FFC72C;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    #score {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BYU Connect 4</h1>
+  <a href = "index.html">Main Page</a>
+  <div id="game-board"></div>
+  <div id="status">Your turn!</div>
+  <div id="score">User: 0 | Computer: 0</div>
+
+  <script>
+    const board = [];
+    const ROWS = 6;
+    const COLS = 7;
+    let userScore = 0;
+    let computerScore = 0;
+    let gameOver = false;
+
+    const gameBoard = document.getElementById('game-board');
+    const statusText = document.getElementById('status');
+    const scoreText = document.getElementById('score');
+
+    function initBoard() {
+      gameBoard.innerHTML = '';
+      board.length = 0;
+      gameOver = false;
+      for (let r = 0; r < ROWS; r++) {
+        const row = [];
+        for (let c = 0; c < COLS; c++) {
+          row.push('');
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.addEventListener('click', () => handleMove(c));
+          gameBoard.appendChild(cell);
+        }
+        board.push(row);
+      }
+    }
+
+    function handleMove(col) {
+      if (gameOver) return;
+      for (let row = ROWS - 1; row >= 0; row--) {
+        if (!board[row][col]) {
+          board[row][col] = 'user';
+          updateCell(row, col, 'user');
+          if (checkWinner('user')) {
+            statusText.textContent = 'You win!';
+            userScore++;
+            gameOver = true;
+            updateScore();
+            return;
+          }
+          setTimeout(() => computerMove(), 500);
+          return;
+        }
+      }
+    }
+
+    function computerMove() {
+      if (gameOver) return;
+      let col;
+      do {
+        col = Math.floor(Math.random() * COLS);
+      } while (board[0][col]);
+
+      for (let row = ROWS - 1; row >= 0; row--) {
+        if (!board[row][col]) {
+          board[row][col] = 'computer';
+          updateCell(row, col, 'computer');
+          if (checkWinner('computer')) {
+            statusText.textContent = 'Computer wins!';
+            computerScore++;
+            gameOver = true;
+            updateScore();
+            return;
+          }
+          statusText.textContent = 'Your turn!';
+          return;
+        }
+      }
+    }
+
+    function updateCell(row, col, player) {
+      const index = row * COLS + col;
+      gameBoard.children[index].classList.add(player);
+    }
+
+    function updateScore() {
+      scoreText.textContent = `User: ${userScore} | Computer: ${computerScore}`;
+      setTimeout(initBoard, 2000);
+    }
+
+    function checkWinner(player) {
+      // Check horizontal, vertical, and diagonals
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+          if (checkLine(player, r, c, 0, 1)) return true;
+        }
+      }
+      for (let r = 0; r < ROWS - 3; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (checkLine(player, r, c, 1, 0)) return true;
+        }
+      }
+      for (let r = 0; r < ROWS - 3; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+          if (checkLine(player, r, c, 1, 1)) return true;
+        }
+      }
+      for (let r = 3; r < ROWS; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+          if (checkLine(player, r, c, -1, 1)) return true;
+        }
+      }
+      return false;
+    }
+
+    function checkLine(player, r, c, dr, dc) {
+      for (let i = 0; i < 4; i++) {
+        if (board[r + i * dr][c + i * dc] !== player) return false;
+      }
+      return true;
+    }
+
+    initBoard();
+  </script>
+</body>
+</html>
